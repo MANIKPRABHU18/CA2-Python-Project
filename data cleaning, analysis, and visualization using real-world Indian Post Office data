@@ -1,0 +1,138 @@
+import pandas as pd
+
+df = pd.read_csv('C:/Users/Manik Prabhu/Downloads/postal address.csv', low_memory=False)
+df.dropna(subset=['statename', 'latitude', 'longitude'], inplace=True)
+
+df['latitude'] = df['latitude'].str.replace('°', '', regex=False).str.replace('N', '', regex=False).str.strip()
+df['longitude'] = df['longitude'].str.replace('°', '', regex=False).str.replace('E', '', regex=False).str.strip()
+
+df['latitude'] = pd.to_numeric(df['latitude'], errors='coerce')
+df['longitude'] = pd.to_numeric(df['longitude'], errors='coerce')
+
+df_cleaned = df.dropna(subset=['latitude', 'longitude'])
+print(df_cleaned.head())
+
+import matplotlib.pyplot as plt
+
+state_counts = df_cleaned['statename'].value_counts().head(10)
+state_counts.plot(kind='bar', color='skyblue', figsize=(10, 5))
+plt.title('Top 10 States by Number of Post Offices')
+plt.xlabel('State')
+plt.ylabel('Number of Post Offices')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+delivery_counts = df_cleaned['delivery'].value_counts()
+delivery_counts.plot(kind='bar', color=['green', 'orange'], figsize=(6, 4))
+plt.title('Delivery vs Non-Delivery Post Offices')
+plt.xlabel('Delivery Status')
+plt.ylabel('Number of Offices')
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+plt.figure(figsize=(8, 6))
+plt.scatter(df_cleaned['longitude'], df_cleaned['latitude'], alpha=0.3, s=10)
+plt.title('Post Office Locations (Scatter Plot)')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+%matplotlib inline
+
+# Dummy Data Example
+df_cleaned = pd.DataFrame({
+    'latitude': [28.6, 19.1, 13.0, 26.9],
+    'longitude': [77.2, 72.8, 80.2, 75.8]
+})
+
+plt.figure(figsize=(8, 6))
+sns.kdeplot(
+    x=df_cleaned['longitude'], y=df_cleaned['latitude'],
+    cmap='Reds', fill=True, bw_adjust=0.5
+)
+plt.title('Post Office Location Density (KDE Heatmap)')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.tight_layout()
+plt.show()
+
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+sns.boxplot(y=df_cleaned['latitude'], color='lightblue')
+plt.title('Latitude Distribution')
+
+plt.subplot(1, 2, 2)
+sns.boxplot(y=df_cleaned['longitude'], color='lightgreen')
+plt.title('Longitude Distribution')
+
+plt.tight_layout()
+plt.show()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+df_cleaned = df.dropna(subset=['latitude', 'longitude', 'pincode'])
+df_cleaned = df.dropna(subset=['latitude', 'longitude', 'pincode']).copy()
+
+df_cleaned['latitude'] = pd.to_numeric(df_cleaned['latitude'], errors='coerce')
+df_cleaned['longitude'] = pd.to_numeric(df_cleaned['longitude'], errors='coerce')
+
+
+
+sns.pairplot(df_cleaned[['latitude', 'longitude', 'pincode']].dropna(), diag_kind='kde')
+plt.suptitle('Pairplot of Latitude, Longitude & Pincode', y=1.02)
+plt.show()
+
+correlation = df_cleaned[['latitude', 'longitude', 'pincode']].corr()
+plt.figure(figsize=(6, 4))
+sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.tight_layout()
+plt.show()
+
+office_counts = df_cleaned['officetype'].value_counts()
+
+office_counts.plot(kind='bar', color='lightcoral', figsize=(6, 4))
+plt.title('Office Type Distribution')
+plt.xlabel('Office Type')
+plt.ylabel('Count')
+plt.tight_layout()
+plt.show()
+
+delivery_pie = df_cleaned['delivery'].value_counts()
+delivery_pie.plot.pie(autopct='%1.1f%%', colors=['green', 'red'], figsize=(6, 6))
+plt.title('Delivery vs Non-Delivery (Pie Chart)')
+plt.ylabel('')
+plt.tight_layout()
+plt.show()
+
+sns.histplot(df_cleaned['latitude'], kde=True, bins=50, color='skyblue')
+plt.title('Distribution of Latitude')
+plt.xlabel('Latitude')
+plt.ylabel('Frequency')
+plt.show()
+
+sns.histplot(df_cleaned['longitude'], kde=True, bins=50, color='salmon')
+plt.title('Distribution of Longitude')
+plt.xlabel('Longitude')
+plt.ylabel('Frequency')
+plt.show()
+
+sns.histplot(
+    df_cleaned['pincode'].dropna().astype(int),
+    bins=50,
+    kde=True,
+    color='purple'
+)
+plt.title('Pincode Distribution with KDE')
+plt.xlabel('Pincode')
+plt.ylabel('Frequency')
+plt.show()
